@@ -1,4 +1,4 @@
 source 'http://rubygems.org'
 
-gem 'psych'
+#gem 'psych'
 gem 'rubytter'

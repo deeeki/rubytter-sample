@@ -7,7 +7,7 @@ Dir.mkdir('tmp') unless File.directory?('tmp')
 d = Date.today
 today = 'tmp/' + d.to_s
 yesterday = 'tmp/' + (d - 1).to_s
-past = File.exists?(yesterday) ? YAML.load_file(yesterday) : []
+past = File.exists?(yesterday) ? YAML.load_file(yesterday).map {|l| l[:full_name]} : []
 
 @rubytter = OAuthRubytter.new(@access_token)
 
@@ -21,15 +21,16 @@ begin
 		results << keys.inject({}) {|ret, key| ret[key] = l.send(key); ret}
 	end
 end until nc.zero?
+current = results.map {|l| l[:full_name]}
 
 puts "#{d - 1} > #{d}"
 puts "\n##### removed #####\n"
-(past - results).each do |l|
-	puts l[:full_name]
+(past - current).each do |l|
+	puts l
 end
 puts "\n##### added #####\n"
-(results - past).each do |l|
-	puts l[:full_name]
+(current - past).each do |l|
+	puts l
 end
 
 File.open(today, 'w') {|f| f.puts results.to_yaml}
